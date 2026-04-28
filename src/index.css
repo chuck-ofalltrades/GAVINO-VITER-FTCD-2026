@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/poppins-regular.woff");
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-primary: #3fa0d3;
+  --text-dark: #2b2b2b;
+  --font-poppins: "Poppins";
+
+  --color-secondary: #3fa0d3;
+  --color-accent: #2f86b3;
+  --color-accent-light: #f5a623;
+  --color-dark: rgb(43 43 43);
+  --color-light-warning: rgb(255 253 231);
+  --color-not-active: rgb(255, 128, 39);
+  --color-hidden: rgb(237, 28, 36);
+  --color-warning: rgb(240 154 2);
+  --color-alert: rgb(63 5 5);
+  --color-secondary-green: rgb(52 136 109);
+  --color-success: rgb(0 145 38);
+
+  --color-green: rgb(55 135 109);
+  --color-green-light: rgb(67 169 139);
+  --color-sage: rgb(141 203 140);
+  --color-blue: rgb(71 177 201);
+  --color-dark-blue: rgb(22 85 115);
+
+  --font-poppins: "poppins", sans-serif;
+  --font-sans: "poppins", sans-serif;
+  --font-dmsans-bold: "dmsans-bold", sans-serif;
+  --font-dmsans-regular: "dmsans-regular", sans-serif;
+  --default-font-family: "poppins", var(--font-sans);
+
+  --animate-shake: shake 0.2s ease-in-out;
+  --animate-fadeIn: fadeIn 0.2s ease-in-out;
+  --animate-fadeOut: fadeOut 0.2s ease-in-out;
+  --animate-slideUp: slideUp 0.2s ease-in-out;
+  --animate-slideDown: slideDown 0.2s ease-in-out;
+  --animate-loading: loading 1.5s ease-in-out infinite;
+
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(2px); }
+    50% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+    100% { transform: translateX(0); }
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes slideUp {
+    0% { transform: translateY(10px); }
+    100% { transform: translateY(0px); }
+  }
+  @keyframes {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(10px); }
+  }
+  @keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+}
+
+@layer base {
+  * {
+    @apply scroll-smooth font-poppins;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+  p {
+    @apply mb-2;
+  }
+  body {
+    @apply leading-relaxed font-poppins text-xs min-h-full text-dark;
+  }
+  pre {
+    @apply font-poppins;
+  }
+  nav {
+    @apply bg-primary;
+  }
+  table {
+    @apply border-collapse border-spacing-2 text-left w-full table-auto;
+  }
+  table tr:hover {
+    @apply bg-gray-100;
+  }
+  table tr {
+    @apply border-b border-solid border-gray-300;
+  }
+  table tr.currentUser .table-action {
+    @apply bg-primary/5 backdrop-opacity-100;
+  }
+  table th {
+    @apply font-bold bg-gray-200 py-2 px-3;
+  }
+  table td {
+    @apply px-3 py-2;
+  }
+  input,
+  select {
+    @apply h-[35px] border border-solid border-gray-300 p-2 rounded-lg w-full truncate bg-transparent outline-none;
+  }
+  select {
+    @apply text-xs h-[35px];
+  }
+  textarea {
+    @apply block border border-solid border-gray-300 p-2 rounded-lg w-full h-28 bg-transparent outline-none;
+  }
+  label {
+    @apply text-xs text-primary transform -translate-y-6 -translate-x-1 absolute left-3 top-4 px-1 z-10 isolate;
+  }
+  label:after {
+    @apply content-[''] w-[97%] h-[2.5px] absolute left-px top-[7.2px] bg-white -z-10;
+  }
+  input:disabled,
+  select:disabled,
+  textarea:disabled,
+  :disabled {
+    @apply bg-gray-100 border-gray-200 cursor-not-allowed hover:bg-gray-100 hover:text-inherit hover:border-gray-200;
+  }
+  input::file-selector-button {
+    @apply mr-5 border-0 bg-primary disabled:bg-gray-200 rounded-md text-white cursor-pointer px-1 py-0;
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    @apply border border-solid border-primary outline-0;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  .wrapper {
+    @apply relative min-h-[100dvh] pt-[75px] ml-56 pr-6 pl-4 transition-all duration-150 ease-linear;
+  }
+  .navigation {
+    @apply fixed left-0 top-0 mt-[50px] z-50;
+  }
+  .nav {
+    @apply flex items-center;
+  }
+}
+
+@layer utilities {
+  .loading-bar::after {
+    @apply content-[''] absolute top-0 left-0 w-[180%] h-full bg-gradient-to-r from-transparent via-[#eeeeee] to-transparent animate-loading;
+  }
+}
