@@ -33,12 +33,12 @@ const Roles = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between w-full mb-8">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-lg font-bold">Role</h1>
 
           <button
             type="button"
-            className="flex items-center gap-1 text-primary text-sm"
+            className="flex items-center gap-1 text-primary text-sm hover:underline"
             onClick={handleAdd}
           >
             <FaPlus />
