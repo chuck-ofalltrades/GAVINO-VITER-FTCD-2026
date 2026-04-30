@@ -4,6 +4,8 @@ import NotificationList from "./NotificationList";
 import { StoreContext } from "../../../../store/StoreContext";
 import { setIsAdd } from "../../../../store/StoreAction";
 import { FaPlus } from "react-icons/fa";
+import { FaArrowLeftLong } from "react-icons/fa6";
+import { HiMenuAlt2 } from "react-icons/hi";
 import ModalAddNotification from "./ModalAddNotification";
 
 const Notification = () => {
@@ -18,23 +20,30 @@ const Notification = () => {
   return (
     <>
       <Layout menu="settings" submenu="notification">
-        <div className="flex items-center justify-between w-full">
-          <h1>Notification</h1>
-          <div>
-            <button
-              type="button"
-              className="flex items-center gap-1"
-              onClick={handleAdd}
-            >
-              <FaPlus className="text-primary" />
-              Add
-            </button>
+        <div className="flex items-center gap-5 mb-6">
+          <HiMenuAlt2 className="text-xl text-dark" />
+          <FaArrowLeftLong className="text-xl text-dark" />
+
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-primary">Settings</span>
+            <span className="text-primary">›</span>
+            <span className="text-dark">Notification</span>
           </div>
         </div>
 
-        <div>
-          <NotificationList itemEdit={itemEdit} setItemEdit={setItemEdit} />
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-lg font-bold">Notification</h1>
+          <button
+            type="button"
+            className="flex items-center gap-1 text-primary text-sm hover:underline"
+            onClick={handleAdd}
+          >
+            <FaPlus />
+            Add
+          </button>
         </div>
+
+        <NotificationList itemEdit={itemEdit} setItemEdit={setItemEdit} />
       </Layout>
 
       {store.isAdd && <ModalAddNotification itemEdit={itemEdit} />}

@@ -4,7 +4,10 @@ import Roles from "../pages/developer/settings/roles/Roles";
 import Users from "../pages/developer/settings/users/Users";
 import SystemUsers from "../pages/developer/settings/users/SystemUsers";
 import Categories from "../pages/developer/settings/categories/Categories";
-import Designations from "../pages/developer/settings/designations/Designations"; // Added Designation Import
+import Designations from "../pages/developer/settings/designations/Designations";
+import Notification from "../pages/developer/settings/notification/Notification"; // <- 1. Notification Import Added
+import Donor from "../pages/developer/donor/Donor";
+import Children from "../pages/developer/children/Children";
 
 export const routesDeveloper = [
   {
@@ -42,7 +45,25 @@ export const routesDeveloper = [
 
   // DESIGNATIONS
   {
-    path: `${devNavUrl}/${urlDeveloper}/settings/designation`, // Added Designation Route
+    path: `${devNavUrl}/${urlDeveloper}/settings/designation`,
     element: <Designations />,
+  },
+
+  // NOTIFICATION
+  {
+    path: `${devNavUrl}/${urlDeveloper}/settings/notification`, // <- 2. Notification Route Added
+    element: <Notification />,
+  },
+
+  // DONOR
+  {
+    path: `${devNavUrl}/${urlDeveloper}/donor-list`,
+    element: <Donor />,
+  },
+
+  // CHILDREN
+  {
+    path: `${devNavUrl}/${urlDeveloper}/children-list`,
+    element: <Children />,
   },
 ];

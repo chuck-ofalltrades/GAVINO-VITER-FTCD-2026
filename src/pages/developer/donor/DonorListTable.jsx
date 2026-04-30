@@ -2,27 +2,27 @@ import React from "react";
 import { FaArchive, FaEdit, FaTrash, FaTrashRestore } from "react-icons/fa";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
-import { apiVersion } from "../../../../functions/functions-general";
-import { queryDataInfinite } from "../../../../functions/custom-hooks/queryDataInfinite";
-import FetchingSpinner from "../../../../partials/spinners/FetchingSpinner";
-import Status from "../../../../partials/Status";
-import TableLoading from "../../../../partials/TableLoading";
-import NoData from "../../../../partials/NoData";
-import ServerError from "../../../../partials/ServerError";
-import Loadmore from "../../../../partials/Loadmore";
-import SearchBar from "../../../../partials/SearchBar";
-import ModalArchive from "../../../../partials/modals/ModalArchive";
-import ModalRestore from "../../../../partials/modals/ModalRestore";
-import ModalDelete from "../../../../partials/modals/ModalDelete";
+import { apiVersion } from "../../../functions/functions-general";
+import { queryDataInfinite } from "../../../functions/custom-hooks/queryDataInfinite";
+import FetchingSpinner from "../../../partials/spinners/FetchingSpinner";
+import Status from "../../../partials/Status";
+import TableLoading from "../../../partials/TableLoading";
+import NoData from "../../../partials/NoData";
+import ServerError from "../../../partials/ServerError";
+import Loadmore from "../../../partials/Loadmore";
+import SearchBar from "../../../partials/SearchBar";
+import ModalArchive from "../../../partials/modals/ModalArchive";
+import ModalRestore from "../../../partials/modals/ModalRestore";
+import ModalDelete from "../../../partials/modals/ModalDelete";
 import {
   setIsAdd,
   setIsArchive,
   setIsDelete,
   setIsRestore,
-} from "../../../../store/StoreAction";
-import { StoreContext } from "../../../../store/StoreContext";
+} from "../../../store/StoreAction";
+import { StoreContext } from "../../../store/StoreContext";
 
-const NotificationList = ({ itemEdit, setItemEdit }) => {
+const DonorListTable = ({ itemEdit, setItemEdit }) => {
   const { store, dispatch } = React.useContext(StoreContext);
   const [page, setPage] = React.useState(1);
   const [filterData, setFilterData] = React.useState("");
@@ -41,16 +41,11 @@ const NotificationList = ({ itemEdit, setItemEdit }) => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: [
-      "notification",
-      search.current.value,
-      store.isSearch,
-      filterData,
-    ],
+    queryKey: ["donor", search.current.value, store.isSearch, filterData],
     queryFn: async ({ pageParam = 1 }) =>
       await queryDataInfinite(
         "",
-        `${apiVersion}/controllers/developers/settings/notification/page.php?start=${pageParam}`,
+        `${apiVersion}/controllers/developers/donor/page.php?start=${pageParam}`,
         false,
         { filterData, searchValue: search?.current?.value },
         "post",
@@ -90,16 +85,24 @@ const NotificationList = ({ itemEdit, setItemEdit }) => {
   return (
     <>
       <div className="py-5 flex items-center justify-between">
-        <div className="relative">
-          <label>Status</label>
-          <select
-            value={filterData}
-            onChange={(e) => setFilterData(e.target.value)}
-          >
-            <option value="">All</option>
-            <option value="1">Active</option>
-            <option value="0">Inactive</option>
-          </select>
+        <div className="flex items-center gap-4">
+          <div className="relative border border-gray-300 rounded-md px-2 py-1 flex items-center gap-2">
+            <span className="text-xs text-gray-500 absolute -top-2 left-2 bg-white px-1">
+              Status
+            </span>
+            <select
+              className="outline-none text-sm bg-transparent"
+              value={filterData}
+              onChange={(e) => setFilterData(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+          <span className="text-sm font-semibold text-gray-600 flex items-center gap-1">
+            <i className="fa-solid fa-users"></i> {result?.pages[0]?.total || 0}
+          </span>
         </div>
         <SearchBar
           search={search}
@@ -114,16 +117,15 @@ const NotificationList = ({ itemEdit, setItemEdit }) => {
 
       <div className="relative">
         {status !== "pending" && isFetching && <FetchingSpinner />}
-        <table>
-          <thead>
+        <table className="w-full">
+          <thead className="bg-gray-100 text-left">
             <tr>
-              <th>#</th>
-              <th>Status</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Purpose</th>
-              <th>Action</th>
+              <th className="py-2 px-3">#</th>
+              <th className="py-2 px-3">Status</th>
+              <th className="py-2 px-3">Name</th>
+              <th className="py-2 px-3">Email</th>
+              <th className="py-2 px-3">Stripe ID</th>
+              <th className="py-2 px-3"></th> {/* Removed "Action" here */}
             </tr>
           </thead>
           <tbody>
@@ -149,37 +151,41 @@ const NotificationList = ({ itemEdit, setItemEdit }) => {
             {result?.pages?.map((page, pageIndex) => (
               <React.Fragment key={pageIndex}>
                 {page?.data?.map((item, itemIndex) => (
-                  <tr key={`${item.notification_aid}-${itemIndex}`}>
-                    <td>{counter++}</td>
-                    <td>
+                  <tr
+                    key={`${item.donor_aid}-${itemIndex}`}
+                    className="border-b"
+                  >
+                    <td className="py-2 px-3">{counter++}</td>
+                    <td className="py-2 px-3">
                       <Status
-                        text={
-                          item.notification_is_active == 1
-                            ? "active"
-                            : "inactive"
-                        }
+                        text={item.donor_is_active == 1 ? "active" : "inactive"}
                       />
                     </td>
-                    <td>{item.notification_name}</td>
-                    <td>{item.notification_email}</td>
-                    <td>{item.notification_phone}</td>
-                    <td>{item.notification_purpose}</td>
-                    <td>
+                    <td className="py-2 px-3">{item.donor_name}</td>
+                    <td className="py-2 px-3">{item.donor_email}</td>
+                    <td className="py-2 px-3">{item.donor_stripe_id || "-"}</td>
+                    <td className="py-2 px-3">
                       <div className="flex gap-2">
-                        {item.notification_is_active == 1 ? (
+                        <button
+                          type="button"
+                          className="bg-primary text-white text-xs px-3 py-1 rounded"
+                          onClick={() => handleEdit(item)}
+                        >
+                          Donate
+                        </button>
+                        {/* Adding standard action buttons for full CRUD */}
+                        {item.donor_is_active == 1 ? (
                           <>
                             <button
                               type="button"
-                              className="tooltip-action-table"
-                              data-tooltip="Edit"
+                              className="text-gray-500 hover:text-dark"
                               onClick={() => handleEdit(item)}
                             >
                               <FaEdit />
                             </button>
                             <button
                               type="button"
-                              className="tooltip-action-table"
-                              data-tooltip="Archive"
+                              className="text-gray-500 hover:text-dark"
                               onClick={() => handleArchive(item)}
                             >
                               <FaArchive />
@@ -189,16 +195,14 @@ const NotificationList = ({ itemEdit, setItemEdit }) => {
                           <>
                             <button
                               type="button"
-                              className="tooltip-action-table"
-                              data-tooltip="Restore"
+                              className="text-gray-500 hover:text-dark"
                               onClick={() => handleRestore(item)}
                             >
                               <FaTrashRestore />
                             </button>
                             <button
                               type="button"
-                              className="tooltip-action-table"
-                              data-tooltip="Delete"
+                              className="text-red-500 hover:text-red-700"
                               onClick={() => handleDelete(item)}
                             >
                               <FaTrash />
@@ -230,36 +234,33 @@ const NotificationList = ({ itemEdit, setItemEdit }) => {
 
       {store.isArchive && itemEdit && (
         <ModalArchive
-          mysqlApiArchive={`${apiVersion}/controllers/developers/settings/notification/active.php?id=${itemEdit.notification_aid}`}
-          msg="Are you sure you want to archive this record?"
-          successMsg="Successfully Archived."
-          item={itemEdit.notification_name}
-          dataItem={itemEdit}
-          queryKey="notification"
+          mysqlApiArchive={`${apiVersion}/controllers/developers/donor/active.php?id=${itemEdit.donor_aid}`}
+          msg="Archive this donor?"
+          successMsg="Archived."
+          item={itemEdit.donor_name}
+          queryKey="donor"
         />
       )}
       {store.isRestore && itemEdit && (
         <ModalRestore
-          mysqlApiRestore={`${apiVersion}/controllers/developers/settings/notification/active.php?id=${itemEdit.notification_aid}`}
-          msg="Are you sure you want to restore this record?"
-          successMsg="Successfully Restored."
-          item={itemEdit.notification_name}
-          dataItem={itemEdit}
-          queryKey="notification"
+          mysqlApiRestore={`${apiVersion}/controllers/developers/donor/active.php?id=${itemEdit.donor_aid}`}
+          msg="Restore this donor?"
+          successMsg="Restored."
+          item={itemEdit.donor_name}
+          queryKey="donor"
         />
       )}
       {store.isDelete && itemEdit && (
         <ModalDelete
-          mysqlApiDelete={`${apiVersion}/controllers/developers/settings/notification/notification.php?id=${itemEdit.notification_aid}`}
-          msg="Are you sure you want to delete this record?"
-          successMsg="Successfully Deleted."
-          item={itemEdit.notification_name}
-          dataItem={itemEdit}
-          queryKey="notification"
+          mysqlApiDelete={`${apiVersion}/controllers/developers/donor/donor.php?id=${itemEdit.donor_aid}`}
+          msg="Delete this donor permanently?"
+          successMsg="Deleted."
+          item={itemEdit.donor_name}
+          queryKey="donor"
         />
       )}
     </>
   );
 };
 
-export default NotificationList;
+export default DonorListTable;

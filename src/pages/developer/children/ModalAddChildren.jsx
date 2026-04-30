@@ -1,25 +1,25 @@
 import React from "react";
-import { StoreContext } from "../../../../store/StoreContext";
+import { StoreContext } from "../../../store/StoreContext";
 import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiVersion } from "../../../../functions/functions-general";
+import { apiVersion } from "../../../functions/functions-general";
 import {
   setError,
   setIsAdd,
   setMessage,
   setSuccess,
-} from "../../../../store/StoreAction";
-import { queryData } from "../../../../functions/custom-hooks/queryData";
+} from "../../../store/StoreAction";
+import { queryData } from "../../../functions/custom-hooks/queryData";
 import { FaTimes } from "react-icons/fa";
 import { Form, Formik } from "formik";
 import {
   InputText,
-  InputSelect, // Ensure InputSelect exists in your FormInputs component!
-} from "../../../../components/form-input/FormInputs";
-import ButtonSpinner from "../../../../partials/spinners/ButtonSpinner";
-import MessageError from "../../../../partials/MessageError";
+  InputTextArea,
+} from "../../../components/form-input/FormInputs";
+import ButtonSpinner from "../../../partials/spinners/ButtonSpinner";
+import MessageError from "../../../partials/MessageError";
 
-const ModalAddNotification = ({ itemEdit }) => {
+const ModalAddChildren = ({ itemEdit }) => {
   const { store, dispatch } = React.useContext(StoreContext);
   const queryClient = useQueryClient();
 
@@ -27,13 +27,13 @@ const ModalAddNotification = ({ itemEdit }) => {
     mutationFn: (values) =>
       queryData(
         itemEdit
-          ? `${apiVersion}/controllers/developers/settings/notification/notification.php?id=${itemEdit.notification_aid}`
-          : `${apiVersion}/controllers/developers/settings/notification/notification.php`,
+          ? `${apiVersion}/controllers/developers/children/children.php?id=${itemEdit.children_aid}`
+          : `${apiVersion}/controllers/developers/children/children.php`,
         itemEdit ? "put" : "post",
         values,
       ),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["notification"] });
+      queryClient.invalidateQueries({ queryKey: ["children"] });
       if (data.success) {
         dispatch(setSuccess(true));
         dispatch(setMessage(`Successfully ${itemEdit ? "updated" : "added"}`));
@@ -44,28 +44,34 @@ const ModalAddNotification = ({ itemEdit }) => {
         dispatch(setMessage(data.error));
       }
     },
+    // The safety net that caught the crash!
+    onError: (error) => {
+      dispatch(setError(true));
+      dispatch(
+        setMessage(
+          "Server connection failed or invalid JSON response. Check PHP logs.",
+        ),
+      );
+    },
   });
 
   const initVal = {
     ...itemEdit,
-    notification_name: itemEdit ? itemEdit.notification_name : "",
-    notification_email: itemEdit ? itemEdit.notification_email : "",
-    notification_phone: itemEdit ? itemEdit.notification_phone : "",
-    notification_purpose: itemEdit ? itemEdit.notification_purpose : "",
+    children_name: itemEdit ? itemEdit.children_name : "",
+    children_birthdate: itemEdit ? itemEdit.children_birthdate : "",
+    children_story: itemEdit ? itemEdit.children_story : "",
+    children_donation_limit: itemEdit ? itemEdit.children_donation_limit : "",
+    children_is_resident: itemEdit ? itemEdit.children_is_resident : 0,
   };
 
   const yupSchema = Yup.object({
-    notification_name: Yup.string().trim().required("Required"),
-    notification_email: Yup.string()
-      .email("Invalid email")
-      .required("Required"),
-    notification_phone: Yup.string().trim().required("Required"),
-    notification_purpose: Yup.string().trim().required("Required"),
+    children_name: Yup.string().trim().required("Required"),
+    children_birthdate: Yup.string().trim().required("Required"),
+    children_story: Yup.string().trim().required("Required"),
+    children_donation_limit: Yup.string().trim().required("Required"),
   });
 
-  const handleClose = () => {
-    dispatch(setIsAdd(false));
-  };
+  const handleClose = () => dispatch(setIsAdd(false));
 
   React.useEffect(() => {
     dispatch(setError(false));
@@ -77,7 +83,7 @@ const ModalAddNotification = ({ itemEdit }) => {
       <div className="fixed top-0 right-0 z-[70] h-full w-[35rem] bg-white flex flex-col">
         <div className="relative px-6 pt-7 pb-4">
           <h3 className="text-dark text-lg font-bold">
-            {itemEdit ? "Update" : "Add"} Notification
+            {itemEdit ? "Update" : "Add"} Children
           </h3>
           <button
             type="button"
@@ -87,6 +93,7 @@ const ModalAddNotification = ({ itemEdit }) => {
             <FaTimes className="text-xs" />
           </button>
         </div>
+
         <div className="flex-1 px-6 pt-4 overflow-y-auto">
           <Formik
             initialValues={initVal}
@@ -94,7 +101,15 @@ const ModalAddNotification = ({ itemEdit }) => {
             validationSchema={yupSchema}
             onSubmit={(values) => {
               dispatch(setError(false));
-              mutation.mutate(values);
+
+              // FIX: Force numbers and booleans into Strings so PHP doesn't throw a fatal warning on trim()
+              const safePayload = {
+                ...values,
+                children_donation_limit: String(values.children_donation_limit),
+                children_is_resident: String(values.children_is_resident),
+              };
+
+              mutation.mutate(safePayload);
             }}
           >
             {(props) => (
@@ -102,45 +117,62 @@ const ModalAddNotification = ({ itemEdit }) => {
                 <div>
                   <div className="relative mb-6">
                     <InputText
-                      label="Name"
-                      name="notification_name"
+                      label="Full Name"
+                      name="children_name"
                       type="text"
                       disabled={mutation.isPending}
                     />
                   </div>
                   <div className="relative mb-6">
                     <InputText
-                      label="Email"
-                      name="notification_email"
-                      type="text"
+                      label="Birth Date"
+                      name="children_birthdate"
+                      type="date"
+                      disabled={mutation.isPending}
+                    />
+                  </div>
+                  <div className="relative mb-6">
+                    <InputTextArea
+                      label="My Story"
+                      name="children_story"
                       disabled={mutation.isPending}
                     />
                   </div>
                   <div className="relative mb-6">
                     <InputText
-                      label="Phone"
-                      name="notification_phone"
-                      type="text"
+                      label="Donation Amount Limit"
+                      name="children_donation_limit"
+                      type="number"
+                      step="0.01"
                       disabled={mutation.isPending}
                     />
                   </div>
-                  <div className="relative mb-8">
-                    <InputSelect
-                      label="Purpose"
-                      name="notification_purpose"
-                      disabled={mutation.isPending}
+
+                  <div className="flex items-center justify-start gap-2 mb-6 mt-4">
+                    <input
+                      type="checkbox"
+                      id="children_is_resident"
+                      name="children_is_resident"
+                      className="w-4 h-4 cursor-pointer flex-shrink-0"
+                      onChange={() =>
+                        props.setFieldValue(
+                          "children_is_resident",
+                          props.values.children_is_resident == 1 ? 0 : 1,
+                        )
+                      }
+                      checked={props.values.children_is_resident == 1}
+                    />
+                    <label
+                      htmlFor="children_is_resident"
+                      className="text-sm text-primary cursor-pointer whitespace-nowrap"
                     >
-                      <option value="" hidden></option>
-                      <option value="For New Donor">For New Donor</option>
-                      <option value="For Donation Receipt">
-                        For Donation Receipt
-                      </option>
-                      <option value="For Contact Us">For Contact Us</option>
-                      <option value="For FAQ">For FAQ</option>
-                    </InputSelect>
+                      Mark Check If Resident
+                    </label>
                   </div>
+
                   {store.error && <MessageError />}
                 </div>
+
                 <div className="flex gap-4 pb-8 mt-4">
                   <button
                     type="submit"
@@ -172,5 +204,4 @@ const ModalAddNotification = ({ itemEdit }) => {
     </>
   );
 };
-
-export default ModalAddNotification;
+export default ModalAddChildren;

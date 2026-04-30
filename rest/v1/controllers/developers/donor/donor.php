@@ -1,11 +1,11 @@
 <?php
-require '../../../../core/header.php';
-require '../../../../core/functions.php';
-require '../../../../models/developers/settings/notification/Notification.php';
+require '../../../core/header.php';
+require '../../../core/functions.php';
+require '../../../models/developers/donor/Donor.php';
 
 $conn = null;
 $conn = checkDbConnection($conn);
-$notification = new Notification($conn);
+$donor = new Donor($conn);
 
 $body = file_get_contents("php://input");
 $data = json_decode($body, true);

@@ -1,8 +1,7 @@
 <?php
 $conn = null;
 $conn = checkDbConnection($conn);
-$val = new Notification($conn);
-
+$val = new Children($conn);
 $query = checkReadAll($val);
 http_response_code(200);
 getQueriedData($query);

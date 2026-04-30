@@ -1,7 +1,7 @@
 <?php
 $conn = null;
 $conn = checkDbConnection($conn);
-$val = new Notification($conn);
+$val = new Donor($conn);
 
 $query = checkReadAll($val);
 http_response_code(200);

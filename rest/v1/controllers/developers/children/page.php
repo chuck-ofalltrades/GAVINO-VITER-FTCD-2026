@@ -1,20 +1,19 @@
 <?php
-require '../../../../core/header.php';
-require '../../../../core/functions.php';
-require '../../../../models/developers/settings/notification/Notification.php';
+require '../../../core/header.php';
+require '../../../core/functions.php';
+require '../../../models/developers/children/Children.php';
 
 $conn = null;
 $conn = checkDbConnection($conn);
-$val = new Notification($conn);
+$val = new Children($conn);
 
 $body = file_get_contents("php://input");
 $data = json_decode($body, true);
-
 if (!$data) { $data = []; }
 
 $val->start = isset($_GET['start']) ? (int) $_GET['start'] : 1;
 $val->total = 10;
-$val->notification_is_active = isset($data['filterData']) ? $data['filterData'] : "";
+$val->children_is_active = isset($data['filterData']) ? $data['filterData'] : "";
 $val->search = isset($data['searchValue']) ? trim($data['searchValue']) : "";
 
 checkLimitId($val->start, $val->total);
