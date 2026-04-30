@@ -3,6 +3,8 @@ import Dashboard from "../pages/developer/dashboard/Dashboard";
 import Roles from "../pages/developer/settings/roles/Roles";
 import Users from "../pages/developer/settings/users/Users";
 import SystemUsers from "../pages/developer/settings/users/SystemUsers";
+import Categories from "../pages/developer/settings/categories/Categories";
+import Designations from "../pages/developer/settings/designations/Designations"; // Added Designation Import
 
 export const routesDeveloper = [
   {
@@ -30,5 +32,17 @@ export const routesDeveloper = [
   {
     path: `${devNavUrl}/${urlDeveloper}/settings/roles`,
     element: <Roles />,
+  },
+
+  // CATEGORIES
+  {
+    path: `${devNavUrl}/${urlDeveloper}/settings/category`,
+    element: <Categories />,
+  },
+
+  // DESIGNATIONS
+  {
+    path: `${devNavUrl}/${urlDeveloper}/settings/designation`, // Added Designation Route
+    element: <Designations />,
   },
 ];
