@@ -1,0 +1,34 @@
+--- ROLE 1 ---
+Name: Super Administrator
+Description: Full access to all system modules, including developer settings, system user management, and audit logs.
+Status: Active
+
+--- ROLE 2 ---
+Name: Donor Relations Manager
+Description: Primary access to the Donor List and financial reports. Responsible for managing sponsorship records and communication.
+Status: Active
+
+--- ROLE 3 ---
+Name: Social Worker
+Description: Access to the Children List and reports. Responsible for updating child profiles, case studies, and monitoring progress.
+Status: Active
+
+--- ROLE 4 ---
+Name: Data Entry Clerk
+Description: Limited access to input new donor and child records. Cannot delete entries or access system settings.
+Status: Active
+
+--- ROLE 5 ---
+Name: Board Member
+Description: Read-only access to the dashboard, donor summaries, and children reports for oversight purposes.
+Status: Active
+
+--- ROLE 6 ---
+Name: Finance Officer
+Description: Specialized access to donor financial records, tax receipts, and budgetary reports.
+Status: Active
+
+--- ROLE 7 ---
+Name: Temporary Volunteer
+Description: Restricted access for short-term projects or internships. Currently disabled.
+Status: Inactive

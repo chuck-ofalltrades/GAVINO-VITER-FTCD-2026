@@ -8,8 +8,8 @@ class SystemUsers
     public $system_user_last_name;
     public $system_user_email;
     public $system_user_role_id;
-    public $system_user_password; // ADDED
-    public $system_user_key; // ADDED
+    public $system_user_password; 
+    public $system_user_key; 
     public $system_user_created;
     public $system_user_updated;
 
@@ -40,8 +40,8 @@ class SystemUsers
             $sql .= "system_user_last_name, ";
             $sql .= "system_user_email, ";
             $sql .= "system_user_role_id, ";
-            $sql .= "system_user_password, "; // ADDED
-            $sql .= "system_user_key, "; // ADDED
+            $sql .= "system_user_password, "; 
+            $sql .= "system_user_key, "; 
             $sql .= "system_user_created, ";
             $sql .= "system_user_updated ";
             $sql .= ") values ( ";
@@ -50,8 +50,8 @@ class SystemUsers
             $sql .= ":system_user_last_name, ";
             $sql .= ":system_user_email, ";
             $sql .= ":system_user_role_id, ";
-            $sql .= ":system_user_password, "; // ADDED
-            $sql .= ":system_user_key, "; // ADDED
+            $sql .= ":system_user_password, "; 
+            $sql .= ":system_user_key, "; 
             $sql .= ":system_user_created, ";
             $sql .= ":system_user_updated ";
             $sql .= ") ";
@@ -63,8 +63,8 @@ class SystemUsers
                 "system_user_last_name" => $this->system_user_last_name,
                 "system_user_email" => $this->system_user_email,
                 "system_user_role_id" => $this->system_user_role_id,
-                "system_user_password" => $this->system_user_password, // ADDED
-                "system_user_key" => $this->system_user_key, // ADDED
+                "system_user_password" => $this->system_user_password, 
+                "system_user_key" => $this->system_user_key, 
                 "system_user_created" => $this->system_user_created,
                 "system_user_updated" => $this->system_user_updated,
             ]);
@@ -241,6 +241,45 @@ class SystemUsers
             $query = false;
         }
 
+        return $query;
+    }
+
+    // --- ADDED METHODS BELOW ---
+
+    // Read user by their unique URL key
+    public function readKey()
+    {
+        try {
+            $sql = "select * ";
+            $sql .= "from {$this->tblSystemUsers} ";
+            $sql .= "where system_user_key = :system_user_key ";
+            $query = $this->connection->prepare($sql);
+            $query->execute([
+                "system_user_key" => $this->system_user_key,
+            ]);
+        } catch (PDOException $ex) {
+            $query = false;
+        }
+        return $query;
+    }
+
+    // Set the new password and update the timestamp
+    public function setPassword()
+    {
+        try {
+            $sql = "update {$this->tblSystemUsers} set ";
+            $sql .= "system_user_password = :system_user_password, ";
+            $sql .= "system_user_updated = :system_user_updated ";
+            $sql .= "where system_user_key = :system_user_key ";
+            $query = $this->connection->prepare($sql);
+            $query->execute([
+                "system_user_password" => $this->system_user_password,
+                "system_user_updated" => $this->system_user_updated,
+                "system_user_key" => $this->system_user_key,
+            ]);
+        } catch (PDOException $ex) {
+            $query = false;
+        }
         return $query;
     }
 }
